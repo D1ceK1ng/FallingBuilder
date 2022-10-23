@@ -7,10 +7,23 @@ using UnityEngine;
 public class SorterBlocks : MonoBehaviour
 {
     public event Action<List<Block>> OnRemove;
+
     [SerializeField] private BlockCreator _blockCreator;
+    private Craft _craft;
+
+    private void Awake()
+    {
+        _blockCreator.OnSetCtraft += SetCraft;
+    }
+
+    private void SetCraft(Craft craft)
+    {
+        _craft = craft;
+    }
+
     public void SortBlocks(List<Block> currentBlocks)
     {
-        List<List<Block>> avableBlocks = new List<List<Block>>();
+        List<List<Block>> availableBlock = new List<List<Block>>();
         List<float> values =  currentBlocks.Select(e=>e.transform.position.y).ToList();
         for (int i = 0; i < values.Count; i++)
         {
@@ -20,15 +33,15 @@ public class SorterBlocks : MonoBehaviour
         foreach (var item in values)
         {
             List<Block> plusBlocks = currentBlocks.FindAll(e=>Mathf.Round(e.transform.position.y) == item).ToList();
-           avableBlocks.Add(plusBlocks);
+            availableBlock.Add(plusBlocks);
         }
-        List<List<TypeOfBlock>> currentTypesOfBlock = _blockCreator.Craft.ListOfRowsOfCraftableBlocks.Select(e=>e.ListOfTypesOfBlocks).ToList();
-        if( avableBlocks.Count == currentTypesOfBlock.Count)
+        List<List<TypeOfBlock>> currentTypesOfBlock = _craft.ListOfRowsOfCraftableBlocks.Select(e=>e.ListOfTypesOfBlocks).ToList();
+        
+        if (availableBlock.Count != currentTypesOfBlock.Count) return;
+
+        if (CanRemoveBlocks(availableBlock, currentTypesOfBlock))
         {
-               if (CanRemoveBlocks(avableBlocks, currentTypesOfBlock))
-               {
-                 OnRemove?.Invoke(currentBlocks);
-               }
+            OnRemove?.Invoke(currentBlocks);
         }
     }
     private bool CanRemoveBlocks(List<List<Block>> avableBlocks, List<List<TypeOfBlock>> currentTypesOfBlock )
@@ -44,7 +57,7 @@ public class SorterBlocks : MonoBehaviour
                     }
                     if (avableBlocks[i][j].TypeOfBlock != currentTypesOfBlock[i][j])
                     {
-                    return false;
+                        return false;
                     }
                 }
         }
@@ -52,4 +65,8 @@ public class SorterBlocks : MonoBehaviour
             
     }
 
+    private void OnDisable()
+    {
+        _blockCreator.OnSetCtraft -= SetCraft;
+    }
 }

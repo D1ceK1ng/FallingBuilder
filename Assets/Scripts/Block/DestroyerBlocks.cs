@@ -11,7 +11,22 @@ public class DestroyerBlocks : MonoBehaviour
   {
     _blockCreator.OnCreate += AddBlock;
     _sorterBlocks.OnRemove += RemoveBlocks;
+    _blockCreator.OnSetCtraft += DestroyBlocks;
   }
+
+  private void DestroyBlocks(Craft craft)
+  {
+      int currentBlocksCount = _blockCreator.CurrentBlocks.Count;
+      List<Block> currentBlockList = new List<Block>();
+      currentBlockList.AddRange(_blockCreator.CurrentBlocks);
+      for (int i = 0; i < currentBlocksCount; i++)
+      {
+          var block = currentBlockList[i];
+          RemoveCurrentBlock(block);
+          block.ChangeColor();
+      }
+  }
+
   private void RemoveBlocks(List<Block> blocks)
   {
     if (blocks.All(e=>_blocks.Contains(e)))
@@ -19,22 +34,24 @@ public class DestroyerBlocks : MonoBehaviour
         for (int i = 0; i < blocks.Count; i++)
         {
             blocks[i].ChangeColor();
+            
         }
     }
   }
   private void AddBlock(Block block)
   {
     _blocks.Add(block);
-    block.OnDestroy += Destroy;
+    block.OnDestroy += RemoveCurrentBlock;
   }
-  private void Destroy(Block block)
+  private void RemoveCurrentBlock(Block block)
   {
     _blocks.Remove(block);
     _blockCreator.CurrentBlocks.Remove(block);
   }
   private void OnDisable() 
   {
-    _blocks.ForEach(e=>e.OnDestroy -= Destroy);
-    _blockCreator.OnCreate -= AddBlock;
-  }
+        _blocks.ForEach(e=>e.OnDestroy -= RemoveCurrentBlock);
+        _blockCreator.OnCreate -= AddBlock;
+        _blockCreator.OnSetCtraft -= DestroyBlocks;
+    }
 }
