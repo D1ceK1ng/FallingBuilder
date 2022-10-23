@@ -5,12 +5,12 @@ using System.Linq;
 public class DestroyerBlocks : MonoBehaviour
 {
   [SerializeField] private BlockCreator _blockCreator;
-  [SerializeField] private CheckerBlocks _checkerBlocks;
+  [SerializeField] private SorterBlocks _sorterBlocks;
   private List<Block> _blocks = new List<Block>();
   private void Awake() 
   {
-    _blockCreator.OnCreate += GetBlocks;
-    _checkerBlocks.OnRemove += RemoveBlocks;
+    _blockCreator.OnCreate += AddBlock;
+    _sorterBlocks.OnRemove += RemoveBlocks;
   }
   private void RemoveBlocks(List<Block> blocks)
   {
@@ -22,18 +22,19 @@ public class DestroyerBlocks : MonoBehaviour
         }
     }
   }
-  private void GetBlocks(List<Block> blocks)
+  private void AddBlock(Block block)
   {
-    _blocks = blocks;
-    _blocks.ForEach(e=>e.OnDestroy += Destroy);
+    _blocks.Add(block);
+    block.OnDestroy += Destroy;
   }
   private void Destroy(Block block)
   {
     _blocks.Remove(block);
+    _blockCreator.CurrentBlocks.Remove(block);
   }
   private void OnDisable() 
   {
     _blocks.ForEach(e=>e.OnDestroy -= Destroy);
-    _blockCreator.OnCreate -= GetBlocks;
+    _blockCreator.OnCreate -= AddBlock;
   }
 }

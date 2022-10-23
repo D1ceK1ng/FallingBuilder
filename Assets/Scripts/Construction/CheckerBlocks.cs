@@ -6,66 +6,35 @@ using System;
 public class CheckerBlocks : MonoBehaviour
 {
     [SerializeField] private HouseConstructionZone _houseConstructionZone;
-   [SerializeField] private Craft _craft;
-    public event Action<List<Block>> OnRemove;
-    private void Update() 
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
+   [SerializeField] private SorterBlocks _sorterBlocks;
+  [SerializeField] private BlockCreator _blockCreator;
+  private List<Block> _blocks = new List<Block>();
+  private void Awake() 
+  {
+        _blockCreator.OnCreate += AddBlock;
+  }
+  private void AddBlock(Block block)
+  {
+    _blocks.Add(block);
+    block.SetTypeOfBlock(_blockCreator.TypesOfBlock.GetRandomElementOfList());
+    block.OnLand += TryFinding;
+  }
+  private void TryFinding()
+  {
+        _blocks.RemoveAll(e=>e == null);
+        List<FinderBlocks> listOffinderBlocks = FindObjectsOfType<FinderBlocks>().ToList();
+        listOffinderBlocks.ForEach(e=>
         {
-            List<FinderBlocks> listOffinderBlocks = FindObjectsOfType<FinderBlocks>().ToList();
-            listOffinderBlocks.ForEach(e=>
-            {
-                e.SetCollider2D(_craft.ListOfRowsOfCraftableBlocks.Count);
-                e.OnFindManyBlocks += SortBlocks;
+                e.SetCollider2D(_blockCreator.Craft.ListOfRowsOfCraftableBlocks.Count);
+                e.OnFindManyBlocks += _sorterBlocks.SortBlocks;
                 e.FindClosestBlocks(_houseConstructionZone.Blocks);
-            });
-        }
-    }
-    private void SortBlocks(List<Block> currentBlocks)
+        });
+
+  }
+    private void OnDisable() 
     {
-        List<List<Block>> avableBlocks = new List<List<Block>>();
-        List<float> values =  currentBlocks.Select(e=>e.transform.position.y).ToList();
-        for (int i = 0; i < values.Count; i++)
-        {
-            values[i] = Mathf.Round(values[i]);
-        }
-        values = values.Distinct().ToList();
-        foreach (var item in values)
-        {
-            List<Block> plusBlocks = currentBlocks.FindAll(e=>Mathf.Round(e.transform.position.y) == item).ToList();
-           avableBlocks.Add(plusBlocks);
-        }
-        List<List<TypeOfBlock>> currentTypesOfBlock = _craft.ListOfRowsOfCraftableBlocks.Select(e=>e.ListOfTypesOfBlocks).ToList();
-        if( avableBlocks.Count == currentTypesOfBlock.Count)
-        {
-               if (CanRemoveBlocks(avableBlocks, currentTypesOfBlock))
-               {
-                 OnRemove?.Invoke(currentBlocks);
-               }
-        }
-    }
-    private bool CanRemoveBlocks(List<List<Block>> avableBlocks, List<List<TypeOfBlock>> currentTypesOfBlock )
-    {
-        for (int i = 0; i < avableBlocks.Count; i++)
-        {
-                for (int j = 0; j < currentTypesOfBlock[i].Count; j++)
-                {
-                    
-                    if (currentTypesOfBlock[i].Count != avableBlocks[i].Count)
-                    {
-                        return false;
-                    }
-                    else
-                    {
-                       if (avableBlocks[i][j].TypeOfBlock != currentTypesOfBlock[i][j])
-                       {
-                        return false;
-                       }
-                    }
-                }
-        }
-        return true;
-            
+      _blockCreator.OnCreate -= AddBlock;
+     _blocks.ForEach(e=>e.OnLand -= TryFinding);
     }
         
 

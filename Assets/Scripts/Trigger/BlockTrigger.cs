@@ -7,39 +7,29 @@ public class BlockTrigger : Trigger
    [SerializeField] private float _range;
    [SerializeField] private Block _block;
    private List<Block> _closestBlocks = new List<Block>();
-   public event Action<List<Block>> OnFindManyBlocks;
+   private BlockHand _blockHand;
+   private void Awake() 
+   {
+    _blockHand = FindObjectOfType<BlockHand>();
+    _blockHand.ChooseBlock(_block);
+   }
    private void OnTriggerEnter2D(Collider2D other) 
    {
     other.TriggerEntity<HouseConstructionZone>(e=>
     {
         e.AddBlock(_block);
     });
-    other.TriggerEntity<Block>(e=>
-    {
-        e.IsOnEarth = true;
-    }
-    );
-    other.TriggerEntity<Land>(e=>_block.IsOnEarth = true);
    }
-   public void FindClosestBlocks(List<Block> blocksInZone)
+   private void OnCollisionEnter2D(Collision2D other) 
    {
-      _closestBlocks.Clear();
-      Collider2D[] collider2Ds = Physics2D.OverlapCircleAll(transform.position,_range);
-      foreach (var item in collider2Ds)
+      other.collider.TriggerEntity<Block>(e=>
       {
-        if (item.TryGetComponent<Block>(out Block block))
+        if(Mathf.Round(_block.transform.position.x) ==Mathf.Round(e.transform.position.x))
         {
-           if(_closestBlocks.Contains(block) || blocksInZone.Contains(block) == false)
-            {
-                continue;
-            }
-            _closestBlocks.Add(block);
-
+         e.Land();
         }
-      }
-      if (_closestBlocks.Count >= 4)
-      {
-        OnFindManyBlocks?.Invoke(_closestBlocks);
-      }
+      });
+     other.collider.TriggerEntity<Land>(e=> _block.Land());
    }
+
 }
