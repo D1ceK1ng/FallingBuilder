@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BlockMovement
@@ -8,7 +6,7 @@ public class BlockMovement
     private Rigidbody2D _rigidbody2D;
     private float _gravityScale;
     private float _startGravityScale;
-    private Vector2 _bordersForMoving = new Vector2(-9,-3);
+    private Vector2 _bordersForMoving = new Vector2(-7,-3);
     public void Move()
     {
         Vector2 position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -24,4 +22,6 @@ public class BlockMovement
     private void ChangeGravity(float gravity) =>_rigidbody2D.gravityScale = gravity;
     public void SpeedUp() => ChangeGravity(_gravityScale);
     public void SpeedDown() => ChangeGravity(_startGravityScale);
+
 }
+

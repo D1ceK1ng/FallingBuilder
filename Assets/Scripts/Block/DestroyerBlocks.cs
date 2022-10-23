@@ -16,7 +16,6 @@ public class DestroyerBlocks : MonoBehaviour
 
   private void DestroyBlocks(Craft craft)
   {
-      Debug.Log("hueta");
       int currentBlocksCount = _blockCreator.CurrentBlocks.Count;
       List<Block> currentBlockList = new List<Block>();
       currentBlockList.AddRange(_blockCreator.CurrentBlocks);
