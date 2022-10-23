@@ -9,6 +9,7 @@ public class CheckerBlocks : MonoBehaviour
    [SerializeField] private SorterBlocks _sorterBlocks;
   [SerializeField] private BlockCreator _blockCreator;
   private List<Block> _blocks = new List<Block>();
+  public event Action OnLandBlock;
   private void Awake() 
   {
         _blockCreator.OnCreate += AddBlock;
@@ -21,6 +22,7 @@ public class CheckerBlocks : MonoBehaviour
   }
   private void TryFinding()
   {
+        OnLandBlock?.Invoke();
         _blocks.RemoveAll(e=>e == null);
         List<FinderBlocks> listOffinderBlocks = FindObjectsOfType<FinderBlocks>().ToList();
         listOffinderBlocks.ForEach(e=>
