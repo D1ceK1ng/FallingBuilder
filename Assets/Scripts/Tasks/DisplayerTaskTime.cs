@@ -13,7 +13,7 @@ public class DisplayerTaskTime : MonoBehaviour
     }
     private void Update() 
     {
-        _taskTimeBar.DivideImageBar(_tasks.MaxTaskTime, _tasks.TaskTime);
+        _taskTimeBar.DivideImageBar(_tasks.ChangerTime.ReloadTime, _tasks.ChangerTime.CurrentCoolDown);
     }
     private void OnDisable() 
     {

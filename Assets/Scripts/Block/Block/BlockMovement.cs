@@ -15,6 +15,7 @@ public class BlockMovement
     private float _additionalY = 1;
     private float _lastXPosition;
     private float _possibleXMousePosition;
+    public float StartGravityScale { get => _startGravityScale ; set => _startGravityScale = value; }
     public void Move()
     {
          _possibleXMousePosition = GetXMousePosition();
@@ -38,19 +39,25 @@ public class BlockMovement
         ChangeBlockPosition(_bordersForMoving);
         _lastXPosition = _currentTransform.position.x;
     }
+   
     private void ChangeBlockPosition(Vector2 border)
     {
       _currentTransform.position = new Vector2(Mathf.Clamp(_possibleXMousePosition,border.x,border.y),_currentTransform.position.y);
     }
     private float GetXMousePosition() => Mathf.Round(Camera.main.ScreenToWorldPoint(Input.mousePosition).x);
-    public BlockMovement(Transform transform, float gravityScale, Rigidbody2D rigidbody2D)
+    public BlockMovement(Transform transform)
     {
         _currentTransform = transform;
-        _currentTransform.position = new Vector2(GetXMousePosition(), transform.position.y);
-        _gravityScale = gravityScale;
+        SetTransformToMousePosition();
+    }
+    public void SetRigidbody2D(float gravityScale, Rigidbody2D rigidbody2D)
+    {
         _rigidbody2D = rigidbody2D;
+        _gravityScale = _rigidbody2D.gravityScale;
         _startGravityScale = _rigidbody2D.gravityScale;
     }
+    public void SetTransformToMousePosition() => _currentTransform.position = new Vector2(GetXMousePosition(), _currentTransform.position.y);
+
     public void SetDictionary(Dictionary<float,float> dictionary)
     {
         _highestVectorsOfBlocks = dictionary;

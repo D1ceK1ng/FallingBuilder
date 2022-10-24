@@ -2,47 +2,41 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+[RequireComponent(typeof(ChangerTime))]
 public class Tasks : MonoBehaviour
 {
-    private float _taskTime;
-    
+    private ChangerTime _changerTime;
     [SerializeField] private List<Craft> _tasks;
     [SerializeField] private BlockCreator _blockCreator;
     private Craft _currentCraft;
-   [SerializeField]  private float _maxTaskTime = 10f;
-    public float MaxTaskTime { get => _maxTaskTime; private set => _maxTaskTime = value; }
-    public float TaskTime { get => _taskTime; private set => _taskTime = value; }
+    public ChangerTime ChangerTime { get => _changerTime; private set => _changerTime = value; }
+
     public event Action OnEndTime;
     private void Start()
     {
+        ChangerTime = GetComponent<ChangerTime>();
+        ChangerTime.SetAction(Reload);
         GenerateTask();
     }
-    private void Update()
+    public void ResetTime()
     {
-        IncreaseTime();
+        ChangerTime.ResetTime();
     }
-    private void IncreaseTime()
+    private void Reload()
     {
-        if (TaskTime >=  _maxTaskTime)
-        {
-           LoseHeart();
-        }
-        TaskTime += Time.deltaTime;
-
-    }
-    public void LoseHeart()
-    {
-            StartNewTask();
-            OnEndTime?.Invoke();
+        GenerateTask();
+        OnEndTime?.Invoke();
     }
     public void StartNewTask()
     {
-        GenerateTask();
-        TaskTime = 0;
+        ChangerTime.SetAction(GenerateTask);
+        ResetTime();
+        ChangerTime.SetAction(Reload);
     }
     private void GenerateTask()
     {
         _currentCraft = _tasks.GetRandomElementOfList();
+        ChangerTime.ReloadTime = _currentCraft.ReloadTime;
         _blockCreator.SetCurrentCraft(_currentCraft);
     }
 }

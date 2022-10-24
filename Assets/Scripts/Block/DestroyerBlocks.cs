@@ -10,7 +10,10 @@ public class DestroyerBlocks : MonoBehaviour
   [SerializeField] private BlockCreator _blockCreator;
   [SerializeField] private SorterBlocks _sorterBlocks;
   private List<Block> _blocks = new List<Block>();
-  public event UnityAction OnIncreaseScores;
+  private List<Block> _selectedBlocks = new List<Block>();
+  public List<Block> SelectedBlocks { get => _selectedBlocks; set => _selectedBlocks = value; }
+
+    public event UnityAction OnIncreaseScores;
   private void Awake() 
   {
     _blockCreator.OnCreate += AddBlock;
@@ -34,6 +37,7 @@ public class DestroyerBlocks : MonoBehaviour
   private void RemoveBlocks(List<Block> blocks)
   {
     OnIncreaseScores?.Invoke();
+    SelectedBlocks = blocks;
     if (blocks.All(e=>_blocks.Contains(e)))
     {
         for (int i = 0; i < blocks.Count; i++)

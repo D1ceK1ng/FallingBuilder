@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f251a43ba4269e94688a62b6d9fc2968, type: 3}
   m_Name: Building 1
   m_EditorClassIdentifier: 
+  _reloadTime: 50
   _listOfRowsOfCraftableBlocks:
   - _listOfTypesOfBlocks: 010000000100000001000000
   - _listOfTypesOfBlocks: 000000000200000000000000
   - _listOfTypesOfBlocks: 000000000000000000000000
+  _image: {fileID: 0}

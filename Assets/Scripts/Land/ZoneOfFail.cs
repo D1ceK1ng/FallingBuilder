@@ -5,5 +5,5 @@ using UnityEngine;
 public class ZoneOfFail : MonoBehaviour
 {
    [SerializeField] private Tasks _tasks;
-   public void LoseHeart()=> _tasks.LoseHeart();   
+   public void LoseHeart()=> _tasks.ResetTime();   
 }
