@@ -2,11 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System;
+using UnityEngine.Events;
+
 public class DestroyerBlocks : MonoBehaviour
 {
   [SerializeField] private BlockCreator _blockCreator;
   [SerializeField] private SorterBlocks _sorterBlocks;
   private List<Block> _blocks = new List<Block>();
+  public event UnityAction OnIncreaseScores;
   private void Awake() 
   {
     _blockCreator.OnCreate += AddBlock;
@@ -23,18 +27,18 @@ public class DestroyerBlocks : MonoBehaviour
       {
           var block = currentBlockList[i];
           RemoveCurrentBlock(block);
-          block.ChangeColor();
+          block.DestroyBlock();
       }
   }
 
   private void RemoveBlocks(List<Block> blocks)
   {
+    OnIncreaseScores?.Invoke();
     if (blocks.All(e=>_blocks.Contains(e)))
     {
         for (int i = 0; i < blocks.Count; i++)
         {
-            blocks[i].ChangeColor();
-            
+            blocks[i].DestroyBlock();
         }
     }
   }
@@ -53,5 +57,6 @@ public class DestroyerBlocks : MonoBehaviour
         _blocks.ForEach(e=>e.OnDestroy -= RemoveCurrentBlock);
         _blockCreator.OnCreate -= AddBlock;
         _blockCreator.OnSetCtraft -= DestroyBlocks;
+        _sorterBlocks.OnRemove -= RemoveBlocks;
     }
 }

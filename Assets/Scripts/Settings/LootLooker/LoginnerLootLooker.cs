@@ -1,19 +1,20 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using LootLocker.Requests;
 public class LoginnerLootLooker : MonoBehaviour
 {
-    [SerializeField] private ShowerHighestScrores _showerHighestScrores;
     private string _playerID;
-    private void Awake()
+    public event Action OnLogin;
+    private void OnEnable()
     {
         StartCoroutine(GetInformationFromLeaderBoard());
     }
     private IEnumerator GetInformationFromLeaderBoard()
     {
         yield return Login();
-        yield return _showerHighestScrores.FetchTopHighscoresRoutine();
+        OnLogin?.Invoke();
     }
     private IEnumerator Login()
     {

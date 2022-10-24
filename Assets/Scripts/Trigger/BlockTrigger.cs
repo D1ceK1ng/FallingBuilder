@@ -4,9 +4,7 @@ using UnityEngine;
 using System;
 public class BlockTrigger : Trigger
 {
-   [SerializeField] private float _range;
    [SerializeField] private Block _block;
-   private List<Block> _closestBlocks = new List<Block>();
    private BlockHand _blockHand;
    private void Awake() 
    {
@@ -18,6 +16,14 @@ public class BlockTrigger : Trigger
     other.TriggerEntity<HouseConstructionZone>(e=>
     {
         e.AddBlock(_block);
+    });
+    other.TriggerEntity<ZoneOfFail>(e=>
+    {
+      if (_block.IsOnAir)
+      {
+        return;
+      }
+      e.LoseHeart();
     });
    }
    private void OnCollisionEnter2D(Collision2D other) 

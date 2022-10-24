@@ -7,6 +7,7 @@ public class Block : MonoBehaviour
     [SerializeField] private Rigidbody2D _rigidbody2D;
     [SerializeField] private float _gravityScale = 4;
     private BlockMovement _blockMovement;
+    private float _destroyTime = 0.6f;
     private bool _isOnAir = true;
     private TypeOfBlock _typeOfBlock;
     [SerializeField] private List<Sprite> _sprites;
@@ -24,12 +25,11 @@ public class Block : MonoBehaviour
     public void SetTypeOfBlock(TypeOfBlock typeOfBlock)
     {
         _typeOfBlock = typeOfBlock;
-        _spriteRenderer.sprite = _sprites[(int)_typeOfBlock]; 
+        _spriteRenderer.sprite = ReturnSprite(typeOfBlock); 
     }
+    public Sprite ReturnSprite(TypeOfBlock typeOfBlock) => _sprites[(int)typeOfBlock];
     private void Update()
     {
-        
-
         if(CanMove && IsOnAir)
         {
             BlockMovement.Move();
@@ -44,11 +44,10 @@ public class Block : MonoBehaviour
         _blockMovement.SpeedDown();
     }
 
-    public void ChangeColor()
+    public void DestroyBlock()
     {
-         _spriteRenderer.color = Color.red;
          OnDestroy?.Invoke(this);
-         Destroy(gameObject,1);
+         Destroy(gameObject,_destroyTime);
     }
 
 

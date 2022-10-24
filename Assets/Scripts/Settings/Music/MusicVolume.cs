@@ -5,6 +5,9 @@ using UnityEngine;
 public class MusicVolume : MonoBehaviour
 {
     [SerializeField] private AudioSource _audioSource;
+
+    public AudioSource AudioSource { get => _audioSource; private set => _audioSource = value; }
+
     private void Awake() 
     {
         SetMusicVolume();
@@ -12,6 +15,6 @@ public class MusicVolume : MonoBehaviour
     public void SetMusicVolume()
     {
         GetterMusicVolume getterMusicVolume = new GetterMusicVolume();
-        _audioSource.volume = getterMusicVolume.ReturnMusicVolume();
+        AudioSource.volume = getterMusicVolume.ReturnMusicVolume();
     }
 }
