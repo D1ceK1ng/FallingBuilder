@@ -7,6 +7,6 @@ public class Heart : MonoBehaviour
     [SerializeField] private Image _icon;
    public void TakeDamage()
    {
-    _icon.color = Color.white;
+    _icon.color = Color.black;
    }
 }
