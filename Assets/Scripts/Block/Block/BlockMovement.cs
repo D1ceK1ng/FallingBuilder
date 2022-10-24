@@ -12,7 +12,7 @@ public class BlockMovement
     private float _avableBlockDistance =1;
     private Dictionary<float,float> _highestVectorsOfBlocks = new Dictionary<float, float>();
     private Vector2 _unallowedVector;
-    private Vector2 _bordersForMoving = new Vector2(-9,-3);
+    private Vector2 _bordersForMoving = new Vector2(-7,-3);
     private float _additionalY = 1;
     private float _lastXPosition;
     private float _possibleXMousePosition;
